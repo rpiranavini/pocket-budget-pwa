@@ -1,0 +1,19 @@
+{
+  "name": "Pocket Budget \u2014 Personal Finance",
+  "short_name": "Pocket Budget",
+  "description": "A private, offline-first personal budget tracker.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f6f8f6",
+  "theme_color": "#176b52",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

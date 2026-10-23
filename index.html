@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#176b52">
+  <meta name="description" content="A private, offline-first personal budget tracker.">
+  <title>Pocket Budget</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Pocket Budget home">
+        <span class="brand-mark" aria-hidden="true">₨</span>
+        <span><strong>Pocket Budget</strong><small>Your money, in focus</small></span>
+      </a>
+      <button class="icon-button" id="settingsButton" aria-label="Open settings" title="Settings">⚙</button>
+    </header>
+
+    <main>
+      <section class="welcome-row">
+        <div>
+          <p class="eyebrow" id="todayLabel">YOUR MONEY AT A GLANCE</p>
+          <h1>Monthly overview</h1>
+          <p class="muted">A little awareness goes a long way.</p>
+        </div>
+        <label class="month-select-label">
+          <span class="sr-only">Choose month</span>
+          <input id="monthPicker" type="month" aria-label="Choose month">
+        </label>
+      </section>
+
+      <section class="hero-card" aria-labelledby="balanceHeading">
+        <div class="hero-top">
+          <span class="hero-label" id="balanceHeading">Available balance</span>
+          <span class="live-pill"><span></span> On this device</span>
+        </div>
+        <p class="hero-amount" id="availableBalance">Rs. 0.00</p>
+        <p class="hero-sub" id="balanceCaption">Income minus expenses for this month</p>
+        <div class="hero-divider"></div>
+        <div class="hero-stats">
+          <div><span class="stat-icon income-icon">↙</span><span class="stat-label">Income</span><strong id="incomeTotal">Rs. 0.00</strong></div>
+          <div><span class="stat-icon expense-icon">↗</span><span class="stat-label">Expenses</span><strong id="expenseTotal">Rs. 0.00</strong></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">PLAN & SPEND</p><h2>Monthly budget</h2></div>
+          <button class="text-button" id="editBudgetButton">Edit limit</button>
+        </div>
+        <div class="budget-card">
+          <div class="budget-summary">
+            <div><span class="muted small">Monthly spending limit</span><strong id="overallBudget">Not set</strong></div>
+            <div class="align-right"><span class="muted small">Left to spend</span><strong id="overallRemaining">—</strong></div>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="overallProgress"></div></div>
+          <div class="progress-foot"><span id="budgetUsedText">Set a limit to start tracking</span><span id="budgetPercent">—</span></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">QUICK & SIMPLE</p><h2>Recent activity</h2></div>
+          <button class="text-button" id="viewAllButton">View all</button>
+        </div>
+        <div class="activity-card" id="recentActivity">
+          <div class="empty-state"><span class="empty-emoji">✦</span><strong>No activity yet</strong><p>Add your first income or expense to get started.</p></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">YOUR HABITS</p><h2>Spending by category</h2></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-summary"><div><span class="muted small">Spent this month</span><strong id="chartTotal">Rs. 0.00</strong></div><span class="chart-badge">Categories</span></div>
+          <div id="categoryChart" class="category-chart"><div class="empty-chart">Your category breakdown will appear here.</div></div>
+          <div id="categoryLegend" class="category-legend"></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">FUTURE YOU</p><h2>Savings goals</h2></div>
+          <button class="text-button" id="addGoalButton">+ Add goal</button>
+        </div>
+        <div id="goalsList" class="goals-list">
+          <div class="empty-state compact"><span class="empty-emoji">◎</span><strong>No savings goals yet</strong><p>Give your next milestone a name.</p></div>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">STAY ON TRACK</p><h2>Category budgets</h2></div>
+          <button class="text-button" id="addCategoryBudgetButton">+ Add budget</button>
+        </div>
+        <div id="categoryBudgets" class="category-budget-list">
+          <p class="muted small">Add category limits to see what's left in each one.</p>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading">
+          <div><p class="eyebrow">KEEP IT HANDY</p><h2>All transactions</h2></div>
+          <button class="text-button" id="addTransactionFromList">+ Add</button>
+        </div>
+        <div class="filter-row">
+          <input id="transactionSearch" type="search" placeholder="Search notes or categories" aria-label="Search transactions">
+          <select id="typeFilter" aria-label="Filter transaction type"><option value="all">All types</option><option value="expense">Expenses</option><option value="income">Income</option></select>
+        </div>
+        <div id="allTransactions" class="transactions-list"></div>
+      </section>
+
+      <section class="privacy-note">
+        <span aria-hidden="true">🔒</span><div><strong>Private by design</strong><p>Your budget data is stored in this browser on this device. It is not sent to a server. Export a backup regularly, especially before clearing browser data or changing devices.</p></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Quick actions">
+      <button class="nav-item active" data-scroll="top"><span>⌂</span><small>Home</small></button>
+      <button class="nav-item" id="navAddExpense"><span>＋</span><small>Add</small></button>
+      <button class="nav-item" data-scroll="goalsList"><span>◎</span><small>Goals</small></button>
+      <button class="nav-item" id="navSettings"><span>⚙</span><small>Data</small></button>
+    </nav>
+  </div>
+
+  <button class="fab" id="fabAdd" aria-label="Add transaction">＋</button>
+
+  <!-- Transaction modal -->
+  <dialog id="transactionDialog" class="modal">
+    <form id="transactionForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">NEW ENTRY</p><h2 id="transactionModalTitle">Add transaction</h2></div><button type="button" class="close-button" data-close="transactionDialog" aria-label="Close">×</button></div>
+      <div class="segmented" role="group" aria-label="Transaction type">
+        <button type="button" class="segment active" data-kind="expense">Expense</button>
+        <button type="button" class="segment" data-kind="income">Income</button>
+      </div>
+      <input type="hidden" id="transactionKind" value="expense">
+      <label class="field-label" for="transactionAmount">Amount (LKR)</label>
+      <div class="amount-input"><span>Rs.</span><input id="transactionAmount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0.00" required></div>
+      <label class="field-label" for="transactionCategory">Category</label>
+      <select id="transactionCategory" required></select>
+      <label class="field-label" for="transactionNote">Note <span class="muted">(optional)</span></label>
+      <input id="transactionNote" type="text" maxlength="100" placeholder="e.g. lunch, bus fare">
+      <label class="field-label" for="transactionDate">Date</label>
+      <input id="transactionDate" type="date" required>
+      <button class="primary-button full-button" type="submit">Save transaction</button>
+      <p class="form-hint">You can edit or delete entries later.</p>
+    </form>
+  </dialog>
+
+  <!-- Overall budget modal -->
+  <dialog id="budgetDialog" class="modal">
+    <form id="budgetForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">MONTHLY PLAN</p><h2>Overall spending limit</h2></div><button type="button" class="close-button" data-close="budgetDialog">×</button></div>
+      <p class="muted">Choose the maximum amount you'd like to spend in the selected month.</p>
+      <label class="field-label" for="budgetAmount">Budget amount (LKR)</label>
+      <input id="budgetAmount" type="number" inputmode="decimal" min="0" step="0.01" placeholder="e.g. 25000" required>
+      <button class="primary-button full-button" type="submit">Save monthly limit</button>
+    </form>
+  </dialog>
+
+  <!-- Category budget modal -->
+  <dialog id="categoryBudgetDialog" class="modal">
+    <form id="categoryBudgetForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">PLAN A CATEGORY</p><h2>Category budget</h2></div><button type="button" class="close-button" data-close="categoryBudgetDialog">×</button></div>
+      <label class="field-label" for="categoryBudgetCategory">Category</label><select id="categoryBudgetCategory" required></select>
+      <label class="field-label" for="categoryBudgetAmount">Monthly limit (LKR)</label><input id="categoryBudgetAmount" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000" required>
+      <button class="primary-button full-button" type="submit">Save category budget</button>
+    </form>
+  </dialog>
+
+  <!-- Savings goal modal -->
+  <dialog id="goalDialog" class="modal">
+    <form id="goalForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">SAVE WITH PURPOSE</p><h2 id="goalModalTitle">New savings goal</h2></div><button type="button" class="close-button" data-close="goalDialog">×</button></div>
+      <input type="hidden" id="goalId">
+      <label class="field-label" for="goalName">Goal name</label><input id="goalName" type="text" maxlength="60" placeholder="e.g. New laptop" required>
+      <label class="field-label" for="goalTarget">Target amount (LKR)</label><input id="goalTarget" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="e.g. 120000" required>
+      <label class="field-label" for="goalSaved">Already saved (LKR)</label><input id="goalSaved" type="number" min="0" step="0.01" inputmode="decimal" value="0" required>
+      <button class="primary-button full-button" type="submit">Save goal</button>
+    </form>
+  </dialog>
+
+  <!-- Settings and backup modal -->
+  <dialog id="settingsDialog" class="modal">
+    <div class="modal-head"><div><p class="eyebrow">YOUR DATA</p><h2>Settings & backup</h2></div><button type="button" class="close-button" data-close="settingsDialog">×</button></div>
+    <div class="settings-block"><strong>Data stays on this device</strong><p class="muted">Pocket Budget does not upload your transactions. A browser reset, device loss, or clearing site data can erase them.</p></div>
+    <button class="secondary-button full-button" id="exportButton">↓ Export backup (JSON)</button>
+    <label class="secondary-button full-button import-label">↑ Import backup (JSON)<input id="importInput" type="file" accept=".json,application/json" hidden></label>
+    <button class="secondary-button full-button" id="exportCsvButton">↓ Export transactions (CSV)</button>
+    <div class="settings-block"><strong>Storage status</strong><p id="storageStatus" class="muted">Checking local storage…</p></div>
+    <button class="danger-button full-button" id="clearDataButton">Clear all local data</button>
+    <p class="form-hint">Importing a JSON backup replaces the current data. Export first if you want to keep both.</p>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>

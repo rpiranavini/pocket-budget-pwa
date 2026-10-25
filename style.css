@@ -165,3 +165,7 @@ input, select { width: 100%; border: 1px solid #e1e8e2; border-radius: 12px; pad
   .hero-stats strong { font-size: 12px; }
   .modal { padding: 19px; }
 }
+
+/* Clear visual feedback when a monthly budget is nearly or fully used. */
+.budget-warning { color: #a76a0b !important; font-weight: 750; }
+.budget-over { color: var(--red) !important; font-weight: 800; }

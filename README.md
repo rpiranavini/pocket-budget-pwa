@@ -7,7 +7,9 @@ A mobile-first, offline-capable personal budgeting PWA. It uses plain HTML, CSS 
 - Track income from multiple sources and everyday expenses
 - Monthly overview and overall spending limits
 - Category-level monthly budgets
+- Food subcategories: Meal, Online order, and Snacks
 - Category spending breakdown
+- 80% approaching-limit and 100% over-budget warnings; transactions are never blocked
 - Savings goals
 - Search, edit and delete transactions
 - JSON backup/restore and CSV transaction export
@@ -59,7 +61,7 @@ Browser menus vary by Android version. A service worker cannot make the first vi
 - The app does not send financial data to a server or GitHub.
 - GitHub stores the app source code, not the data saved by your browser.
 - Local data is specific to the browser/device and website origin. It does not automatically sync between phone and laptop.
-- Clearing site data, browser resets, or losing the device can erase records. Export a JSON backup regularly and keep it somewhere safe.
+- Clearing site data, browser resets, or losing the device can erase records. Export a JSON backup periodically (for example, once a week or at month-end) and before clearing browser data, changing devices, or reinstalling/resetting your browser. Save it outside the app, such as in your phone Files folder or a private cloud drive. The app does not automatically create a second copy.
 - Importing a JSON backup replaces current data; export current data first if you need both.
 - Do not publish backups to a public repository or share them with others.
 - This is a personal-use tool, not audited financial software. Verify important totals and keep backups.

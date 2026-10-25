@@ -4,7 +4,12 @@
   const STORAGE_KEY = "pocketBudget.v1";
   const categories = {
     expense: [
-      { name: "Food", icon: "🍲" }, { name: "Transport", icon: "🚌" },
+      // Food is split into selectable subcategories for more useful tracking.
+      { name: "Meal", label: "Meal", group: "Food", icon: "🍲" },
+      { name: "Online order", label: "Online order", group: "Food", icon: "🛵" },
+      { name: "Snacks", label: "Snacks", group: "Food", icon: "🍪" },
+      { name: "Food", label: "Food (older entries)", group: "Other / existing entries", icon: "🍲" },
+      { name: "Transport", icon: "🚌" },
       { name: "Shopping", icon: "🛍️" }, { name: "Education", icon: "📚" },
       { name: "Bills", icon: "🧾" }, { name: "Health", icon: "💊" },
       { name: "Personal care", icon: "🧴" }, { name: "Entertainment", icon: "🎬" },
@@ -80,8 +85,14 @@
   }
   function fillCategorySelect(select, kind, includeAll = false) {
     const list = categories[kind] || categories.expense;
-    select.innerHTML = (includeAll ? '<option value="">Choose a category</option>' : "") +
-      list.map(c => `<option value="${escapeHtml(c.name)}">${c.icon} ${escapeHtml(c.name)}</option>`).join("");
+    let html = includeAll ? '<option value="">Choose a category</option>' : "";
+    const groups = [...new Set(list.map(c => c.group || ""))];
+    for (const group of groups) {
+      const members = list.filter(c => (c.group || "") === group);
+      const options = members.map(c => `<option value="${escapeHtml(c.name)}">${c.icon} ${escapeHtml(c.label || c.name)}</option>`).join("");
+      html += group ? `<optgroup label="${escapeHtml(group)}">${options}</optgroup>` : options;
+    }
+    select.innerHTML = html;
   }
   function updateTransactionCategoryOptions() {
     fillCategorySelect($("transactionCategory"), selectedKind);
@@ -99,7 +110,16 @@
     const pct = limit > 0 ? (t.expense / limit) * 100 : 0;
     $("overallProgress").style.width = `${Math.min(100, pct)}%`;
     $("overallProgress").classList.toggle("over", limit > 0 && pct > 100);
-    $("budgetUsedText").textContent = limit > 0 ? `${money(t.expense)} spent of ${money(limit)}` : "Set a limit to start tracking";
+    const budgetStatus = pct > 100
+      ? `Over budget by ${money(t.expense - limit)}`
+      : pct >= 100
+        ? "Budget limit reached"
+        : pct >= 80
+          ? "You're approaching your budget limit"
+          : `${money(t.expense)} spent of ${money(limit)}`;
+    $("budgetUsedText").textContent = limit > 0 ? budgetStatus : "Set a limit to start tracking";
+    $("budgetUsedText").classList.toggle("budget-warning", limit > 0 && pct >= 80);
+    $("budgetUsedText").classList.toggle("budget-over", limit > 0 && pct >= 100);
     $("budgetPercent").textContent = limit > 0 ? `${Math.round(pct)}% used` : "—";
     $("chartTotal").textContent = money(t.expense);
   }
@@ -152,7 +172,11 @@
     container.innerHTML = entries.sort((a,b) => a[0].localeCompare(b[0])).map(([category, limit]) => {
       const spent = monthTransactions().filter(t => t.kind === "expense" && t.category === category).reduce((s,t) => s + Number(t.amount), 0);
       const pct = Number(limit) > 0 ? spent / Number(limit) * 100 : 0;
-      return `<article class="category-budget-card"><div class="cat-budget-top"><div class="category-icon">${iconFor("expense",category)}</div><div class="cat-budget-main"><strong>${escapeHtml(category)}</strong><small>${money(spent)} of ${money(limit)} spent</small></div><div class="cat-budget-right ${spent > limit ? "negative" : ""}">${money(Number(limit)-spent)}<small>left</small></div><button class="mini-button" data-budget-delete="${escapeHtml(category)}" aria-label="Remove ${escapeHtml(category)} budget">×</button></div><div class="progress-track"><div class="progress-fill ${pct>100?"over":""}" style="width:${Math.min(100,pct)}%"></div></div></article>`;
+      const remaining = Number(limit) - spent;
+      const amountLabel = remaining < 0 ? money(Math.abs(remaining)) : money(remaining);
+      const remainingLabel = remaining < 0 ? "over" : "left";
+      const warning = pct > 100 ? " · over budget" : pct >= 80 ? " · approaching limit" : "";
+      return `<article class="category-budget-card"><div class="cat-budget-top"><div class="category-icon">${iconFor("expense",category)}</div><div class="cat-budget-main"><strong>${escapeHtml(category)}</strong><small>${money(spent)} of ${money(limit)} spent${warning}</small></div><div class="cat-budget-right ${spent > limit ? "negative" : ""}">${amountLabel}<small>${remainingLabel}</small></div><button class="mini-button" data-budget-delete="${escapeHtml(category)}" aria-label="Remove ${escapeHtml(category)} budget">×</button></div><div class="progress-track"><div class="progress-fill ${pct>100?"over":""}" style="width:${Math.min(100,pct)}%"></div></div></article>`;
     }).join("");
   }
   function renderAllTransactions() {
